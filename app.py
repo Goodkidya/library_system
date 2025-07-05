@@ -2,7 +2,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import psycopg2
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,41 +10,42 @@ app = Flask(__name__)
 
 def get_db_connection():
     return psycopg2.connect(
-        dbname=os.environ.get("DB_NAME"),
-        user=os.environ.get("DB_USER"),
-        password=os.environ.get("DB_PASSWORD"),
-        host=os.environ.get("DB_HOST"),
-        port=os.environ.get("DB_PORT")
+        host=os.environ['DB_HOST'],
+        dbname=os.environ['DB_NAME'],
+        user=os.environ['DB_USER'],
+        password=os.environ['DB_PASSWORD'],
+        port=os.environ.get('DB_PORT', 5432)
     )
 
-@app.route("/")
+@app.route('/')
 def index():
-    return render_template("index.html")
+    return render_template('index.html')
 
-@app.route("/borrow", methods=["GET", "POST"])
+@app.route('/borrow', methods=['GET', 'POST'])
 def borrow():
     conn = get_db_connection()
     cur = conn.cursor()
-    if request.method == "POST":
-        reader_id = request.form["reader_id"]
-        book_id = request.form["book_id"]
-        borrow_date = datetime.now().date()
-        return_date = None
-        cur.execute("INSERT INTO borrow_records (reader_id, book_id, borrow_date, return_date) VALUES (%s, %s, %s, %s)",
-                    (reader_id, book_id, borrow_date, return_date))
+
+    if request.method == 'POST':
+        reader_id = request.form['reader_id']
+        book_id = request.form['book_id']
+        cur.execute("INSERT INTO records (reader_id, book_id, status) VALUES (%s, %s, %s)", (reader_id, book_id, 'borrowed'))
         conn.commit()
         cur.close()
         conn.close()
-        return redirect(url_for("borrow"))
-    else:
-        cur.execute("SELECT id, name FROM readers")
-        readers = cur.fetchall()
-        cur.execute("SELECT id, title FROM books")
-        books = cur.fetchall()
-        cur.close()
-        conn.close()
-        return render_template("borrow.html", readers=readers, books=books)
+        return redirect(url_for('index'))
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
+    cur.execute("SELECT id, name FROM readers")
+    readers = cur.fetchall()
+
+    cur.execute("SELECT id, title FROM books")
+    books = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template('borrow.html', readers=readers, books=books)
+
+if __name__ == '__main__':
+    port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
