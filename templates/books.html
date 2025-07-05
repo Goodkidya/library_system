@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% block content %}
+<div class="container mt-5">
+  <h2>📚 書籍管理</h2>
+  <form method="POST" action="{{ url_for('add_book') }}" class="row g-3 mb-3">
+    <div class="col-auto">
+      <input
+        type="text"
+        name="title"
+        class="form-control"
+        placeholder="書名"
+        required
+      />
+    </div>
+    <div class="col-auto">
+      <input
+        type="text"
+        name="author"
+        class="form-control"
+        placeholder="作者"
+        required
+      />
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-primary mb-3">新增書籍</button>
+    </div>
+  </form>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>書名</th>
+        <th>作者</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+      <tr>
+        <td>{{ book[0] }}</td>
+        <td>{{ book[1] }}</td>
+        <td>{{ book[2] }}</td>
+        <td>
+          <a
+            href="{{ url_for('edit_book', book_id=book[0]) }}"
+            class="btn btn-warning btn-sm"
+            >編輯</a
+          >
+          <form
+            method="POST"
+            action="{{ url_for('delete_book', book_id=book[0]) }}"
+            style="display: inline"
+          >
+            <button type="submit" class="btn btn-danger btn-sm">刪除</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

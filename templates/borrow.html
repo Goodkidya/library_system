@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>借書</h2>
+<form method="POST" action="/borrow" class="row g-3">
+  <div class="col-md-5">
+    <select name="reader_id" class="form-select" required>
+      <option value="">選擇讀者</option>
+      {% for r in readers %}
+      <option value="{{ r[0] }}">{{ r[1] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-5">
+    <select name="book_id" class="form-select" required>
+      <option value="">選擇書籍</option>
+      {% for b in books %}
+      <option value="{{ b[0] }}">{{ b[1] }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-primary w-100">借出</button>
+  </div>
+</form>
+{% endblock %}

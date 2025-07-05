@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>還書</h2>
+<form method="POST" action="/return" class="row g-3">
+  <div class="col-md-10">
+    <select name="record_id" class="form-select" required>
+      <option value="">選擇未歸還紀錄</option>
+      {% for r in records %}
+      <option value="{{ r[0] }}">[{{ r[0] }}] {{ r[1] }} 借 {{ r[2] }} ({{ r[3] }})</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-warning w-100">歸還</button>
+  </div>
+</form>
+{% endblock %}

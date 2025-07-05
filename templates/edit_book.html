@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block content %}
+<h2>編輯書籍</h2>
+<form method="POST">
+  <div class="mb-3">
+    <label for="title" class="form-label">書名</label>
+    <input
+      type="text"
+      class="form-control"
+      name="title"
+      id="title"
+      value="{{ book[1] }}"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label for="author" class="form-label">作者</label>
+    <input
+      type="text"
+      class="form-control"
+      name="author"
+      id="author"
+      value="{{ book[2] }}"
+      required
+    />
+  </div>
+  <button type="submit" class="btn btn-success">儲存</button>
+  <a href="{{ url_for('books') }}" class="btn btn-secondary">取消</a>
+</form>
+{% endblock %}
