@@ -85,18 +85,20 @@ def books():
     conn.close()
     return render_template('books.html', books=books)
 
-@app.route('/add_book', methods=['POST'])
+@app.route("/add_book", methods=["POST"])
 def add_book():
-    title = request.form['title']
-    author = request.form['author']
+    title = request.form["title"]
+    author = request.form["author"]
+
     conn = get_conn()
     cur = conn.cursor()
-    # cur.execute("INSERT INTO books (title, author, available) VALUES (%s, %s, TRUE)", (title, author))
-    cur.execute("INSERT INTO books (title, author, available, available) VALUES (%s, %s, TRUE, TRUE)", (title, author))
+    # 加入 available=True
+    cur.execute("INSERT INTO books (title, author, available) VALUES (%s, %s, TRUE)", (title, author))
     conn.commit()
     cur.close()
     conn.close()
-    return redirect(url_for('books'))
+    return redirect(url_for("books"))
+
 
 @app.route('/delete_book/<int:book_id>', methods=['POST'])
 def delete_book(book_id):
