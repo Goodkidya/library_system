@@ -90,7 +90,8 @@ def add_book():
     author = request.form['author']
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("INSERT INTO books (title, author) VALUES (%s, %s)", (title, author))
+    # cur.execute("INSERT INTO books (title, author) VALUES (%s, %s)", (title, author))
+    cur.execute("INSERT INTO books (title, author, available) VALUES (%s, %s, TRUE)", (title, author))
     conn.commit()
     cur.close()
     conn.close()
@@ -114,7 +115,13 @@ def borrow():
     if request.method == 'POST':
         reader_id = request.form['reader_id']
         book_id = request.form['book_id']
-        cur.execute("INSERT INTO borrow_records (reader_id, book_id) VALUES (%s, %s)", (reader_id, book_id))
+        # cur.execute("INSERT INTO borrow_records (reader_id, book_id) VALUES (%s, %s)", (reader_id, book_id))
+        # cur.execute("UPDATE books SET available = FALSE WHERE id = %s", (book_id,))
+        borrow_date = datetime.now()
+        cur.execute("""
+            INSERT INTO borrow_records (reader_id, book_id, borrow_date)
+            VALUES (%s, %s, %s)
+        """, (reader_id, book_id, borrow_date))
         cur.execute("UPDATE books SET available = FALSE WHERE id = %s", (book_id,))
         conn.commit()
         cur.close()
