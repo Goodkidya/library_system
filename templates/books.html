@@ -1,19 +1,57 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <h2>書籍管理</h2>
-<form method="POST" action="/add_book" class="row g-3">
-  <div class="col-md-5">
-    <input type="text" name="title" class="form-control" placeholder="書名" required>
+<form
+  method="POST"
+  action="/add_book"
+  enctype="multipart/form-data"
+  class="row g-3"
+>
+  <div class="col-md-4">
+    <input
+      type="text"
+      name="title"
+      class="form-control"
+      placeholder="書名"
+      required
+    />
   </div>
-  <div class="col-md-5">
-    <input type="text" name="author" class="form-control" placeholder="作者" required>
+  <div class="col-md-3">
+    <input
+      type="text"
+      name="author"
+      class="form-control"
+      placeholder="作者"
+      required
+    />
   </div>
-  <div class="col-md-2">
+  <div class="col-md-3">
+    <input type="file" name="cover_image" class="form-control" />
+  </div>
+  <div class="col-md-10 mt-2">
+    <textarea
+      name="description"
+      class="form-control"
+      rows="2"
+      placeholder="詳細說明"
+    ></textarea>
+  </div>
+  <div class="col-md-2 mt-2">
     <button class="btn btn-success w-100">新增</button>
   </div>
 </form>
+
 <table class="table table-bordered mt-3">
-  <thead><tr><th>ID</th><th>書名</th><th>作者</th><th>可借</th><th>操作</th></tr></thead>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>書名</th>
+      <th>作者</th>
+      <th>可借</th>
+      <th>照片</th>
+      <th>說明</th>
+      <th>操作</th>
+    </tr>
+  </thead>
   <tbody>
     {% for b in books %}
     <tr>
@@ -22,7 +60,20 @@
       <td>{{ b[2] }}</td>
       <td>{{ '是' if b[3] else '否' }}</td>
       <td>
-        <form method="POST" action="/delete_book/{{ b[0] }}" style="display:inline;">
+        {% if b[4] %}
+        <img
+          src="{{ url_for('static', filename='uploads/' ~ b[4]) }}"
+          width="60"
+        />
+        {% else %} - {% endif %}
+      </td>
+      <td>{{ b[5] or '' }}</td>
+      <td>
+        <form
+          method="POST"
+          action="/delete_book/{{ b[0] }}"
+          style="display: inline"
+        >
           <button class="btn btn-danger btn-sm">刪除</button>
         </form>
       </td>
