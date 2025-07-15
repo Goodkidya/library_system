@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 import psycopg2
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 app = Flask(__name__)
@@ -108,6 +109,8 @@ def delete_book(book_id):
     return redirect(url_for('books'))
 
 # --- Borrow ---
+from datetime import datetime
+
 @app.route('/borrow', methods=['GET', 'POST'])
 def borrow():
     conn = get_conn()
@@ -115,17 +118,20 @@ def borrow():
     if request.method == 'POST':
         reader_id = request.form['reader_id']
         book_id = request.form['book_id']
-        # cur.execute("INSERT INTO borrow_records (reader_id, book_id, borrow_date) VALUES (%s, %s, NOW())", (reader_id, book_id))
-        # cur.execute("UPDATE books SET available = FALSE WHERE id = %s", (book_id,))
         borrow_date = datetime.now()
-        cur.execute("""
-            INSERT INTO borrow_records (reader_id, book_id, borrow_date, borrow_date) VALUES (%s, %s, %s, NOW())
-        """, (reader_id, book_id, borrow_date))
+
+        # 新增借閱紀錄
+        cur.execute(
+            "INSERT INTO borrow_records (reader_id, book_id, borrow_date) VALUES (%s, %s, %s)",
+            (reader_id, book_id, borrow_date)
+        )
+        # 設定書籍為不可借
         cur.execute("UPDATE books SET available = FALSE WHERE id = %s", (book_id,))
         conn.commit()
         cur.close()
         conn.close()
         return redirect(url_for('borrow'))
+
     cur.execute("SELECT * FROM readers")
     readers = cur.fetchall()
     cur.execute("SELECT * FROM books WHERE available = TRUE")
