@@ -90,7 +90,9 @@ def add_book():
     author = request.form['author']
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("INSERT INTO books (title, author) VALUES (%s, %s)", (title, author))
+    # available default true
+    # cur.execute("INSERT INTO books (title, author) VALUES (%s, %s)", (title, author))
+    cur.execute("INSERT INTO books (title, author, available) VALUES (%s, %s, TRUE)", (title, author))
     conn.commit()
     cur.close()
     conn.close()
@@ -129,6 +131,7 @@ def borrow():
     return render_template('borrow.html', readers=readers, books=books)
 
 # --- Return ---
+borrow_date = datetime.now()
 @app.route('/return', methods=['GET', 'POST'])
 def return_book():
     conn = get_conn()
@@ -156,6 +159,7 @@ def return_book():
     return render_template('return.html', records=records)
 
 # --- Records ---
+borrow_date = datetime.now()
 @app.route('/records')
 def records():
     conn = get_conn()
